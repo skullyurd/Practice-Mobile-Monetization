@@ -1,18 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
+using UnityEngine.UI;
 
 public class ui : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
+    [SerializeField] private TextMeshProUGUI clickText;
+    [SerializeField] private Image clickButtonImage;
+    [SerializeField] Sprite[] buttonSprites;
+
+    [SerializeField] public static ui instance;
+
+    private void Awake()
     {
-        
+        instance = this;
     }
 
-    // Update is called once per frame
-    void Update()
+    public void OnClickButton()
     {
-        
+        Gamemanager.instance.AddClicks(1);
+        clickButtonImage.sprite = buttonSprites[Random.Range(0, buttonSprites.Length)];
+    }
+
+    public void UpdateClickText()
+    {
+        clickText.text = Gamemanager.instance.curClicks.ToString();
     }
 }
