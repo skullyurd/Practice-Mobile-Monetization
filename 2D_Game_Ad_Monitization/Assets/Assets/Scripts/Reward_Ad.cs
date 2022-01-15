@@ -9,6 +9,7 @@ public class Reward_Ad : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowList
 	[SerializeField] Button _showAdButton;
 	[SerializeField] string _androidAdUnitId = "Rewarded_Android";
 	[SerializeField] string _iOSAdUnitId = "Rewarded_iOS";
+	private bool rewardAdInUse;
 	string _adUnitId;
 
 	// Get the Ad Unit ID for the current platform:
@@ -32,6 +33,7 @@ public class Reward_Ad : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowList
 
     private void Start()
     {
+		rewardAdInUse = false;
 		LoadAd();
     }
 
@@ -63,23 +65,22 @@ public class Reward_Ad : MonoBehaviour, IUnityAdsLoadListener, IUnityAdsShowList
 		// Disable the button: 
 		//_showAdButton.interactable = false;
 		// Then show the ad:
+		rewardAdInUse = true;
 		Advertisement.Show(_adUnitId, this);
 	}
 
 	// Implement the Show Listener's OnUnityAdsShowComplete callback method to determine if the user gets a reward:
 	public void OnUnityAdsShowComplete(string adUnitId, UnityAdsShowCompletionState showCompletionState)
 	{
-		if (adUnitId.Equals(_adUnitId) && showCompletionState.Equals(UnityAdsShowCompletionState.COMPLETED))
+		if (adUnitId.Equals(_adUnitId) && showCompletionState.Equals(UnityAdsShowCompletionState.COMPLETED) && rewardAdInUse == true)
 		{
 			Debug.Log("Unity Ads Rewarded Ad Completed");
 			// Grant a reward.
 			Gamemanager.instance.AddClicks(300);
-			_showAdButton.onClick.RemoveAllListeners();
-
 
 			// Load another ad:
 			Advertisement.Load(_adUnitId, this);
-			ui.instance.UpdateClickText();
+			rewardAdInUse = false;
 		}
 	}
 
